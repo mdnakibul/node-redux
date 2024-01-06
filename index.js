@@ -1,6 +1,6 @@
 const { createStore, applyMiddleware } = require("redux")
-const { delayMiddleware, fetchAsyncMiddleware } = require("./middlewares")
 const { fetchTodos, fetchPosts } = require("./utils")
+const { thunk } = require("redux-thunk")
 
 // iniital state 
 const initialState = {
@@ -35,7 +35,7 @@ const todoReducer = (state = initialState, action) => {
 }
 
 // create store 
-const store = createStore(todoReducer, applyMiddleware(delayMiddleware, fetchAsyncMiddleware))
+const store = createStore(todoReducer, applyMiddleware(thunk))
 
 // subscribe to store changes 
 store.subscribe(() => {
