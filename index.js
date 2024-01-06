@@ -1,9 +1,10 @@
 const { createStore, applyMiddleware } = require("redux")
-const { delayMiddleware, fetchTodosMiddleware } = require("./middlewares")
+const { delayMiddleware, fetchAsyncMiddleware } = require("./middlewares")
+const { fetchTodos, fetchPosts } = require("./utils")
 
 // iniital state 
 const initialState = {
-    todos: []
+    todos: [], posts: []
 }
 
 // reducer 
@@ -15,7 +16,18 @@ const todoReducer = (state = initialState, action) => {
             }]
 
         case 'todos/todosLoaded':
-            return [...state.todos, ...action.payload]
+            const newTodos = [...state.todos, ...action.payload]
+            return {
+                todos: newTodos,
+                posts: [...state.posts]
+            }
+
+        case 'todos/postsLoaded':
+            const newPosts = [...state.posts, ...action.payload]
+            return {
+                todos: [...state.todos],
+                posts: newPosts
+            }
 
         default:
             return state
@@ -23,7 +35,7 @@ const todoReducer = (state = initialState, action) => {
 }
 
 // create store 
-const store = createStore(todoReducer, applyMiddleware(delayMiddleware, fetchTodosMiddleware))
+const store = createStore(todoReducer, applyMiddleware(delayMiddleware, fetchAsyncMiddleware))
 
 // subscribe to store changes 
 store.subscribe(() => {
@@ -34,7 +46,5 @@ store.subscribe(() => {
 //     type: 'todos/todoAdded',
 //     payload: 'Learn redux'
 // })
-store.dispatch({
-    type: 'todos/fetchTodos',
-    payload: 'Learn redux'
-})
+store.dispatch(fetchTodos)
+store.dispatch(fetchPosts)
